@@ -32,6 +32,8 @@ int main(void)
 
 	char *test = NULL;
 	size_t alloc = 0;
+	int i = 0;
+	void *alloc_tab[150];
 
 #ifdef malloc_test
 	ft_putendl_fd("--------------------- TESTING MALLOC ---------------------", STDOUT_FILENO);
@@ -61,6 +63,40 @@ int main(void)
 	show_alloc_mem();
 #endif // malloc
 
+#ifdef nb_block
+	ft_putendl_fd("--------------------- NB TINY BLOCK IN TINY HEAP ---------------------", STDOUT_FILENO);
+	i = 0;
+	while (i < 150)
+	{
+		alloc_tab[i] = malloc(TINY_BLOCK_SIZE);
+		++i;
+	}
+
+	show_alloc_mem();
+
+	while (i > 0)
+	{
+		--i;
+		free(alloc_tab[i]);
+	}
+
+	ft_putendl_fd("--------------------- NB SMALL BLOCK IN SMALL HEAP ---------------------", STDOUT_FILENO);
+	i = 0;
+	while (i < 150)
+	{
+		alloc_tab[i] = malloc(SMALL_BLOCK_SIZE);
+		++i;
+	}
+
+	show_alloc_mem();
+
+	while (i > 0)
+	{
+		--i;
+		free(alloc_tab[i]);
+	}
+#endif //nb_block
+
 #ifdef realloc_test
 	ft_putendl_fd("--------------------- TESTING REALLOC ---------------------", STDOUT_FILENO);
 	test = malloc(42 * sizeof(char));
@@ -85,17 +121,17 @@ int main(void)
 
 #ifdef max_alloc
 	ft_putendl_fd("--------------------- MAX ALLOC ---------------------", STDOUT_FILENO);
-	alloc = 16;
-	size_t tot = alloc;
-	do
+	alloc = 8;
+
+	test = malloc(alloc);
+	free(test);
+	while (test != NULL)
 	{
-		test = malloc(alloc);
-		free(test);
 		alloc *= 2;
-		tot += alloc;
-		printf("\rmax alloc : %zu bytes                                                     ", tot);
-		fflush(NULL);
-	} while (test != NULL);
+		test = malloc(alloc);
+		printf("malloc %16zu bytes: %16p\n", alloc, test);
+		free(test);
+	}
 	ft_putendl_fd("", STDOUT_FILENO);	
 #endif
 
